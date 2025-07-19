@@ -28,7 +28,7 @@ body{
     width: 125px;
     margin-top: 10px;
     display: block;
-    
+
 }
 
 .navbar nav{
@@ -51,6 +51,8 @@ body{
     text-decoration: none;
     color: #555;
     padding: 14px 16px;
+    font-weight: bold;
+    border-radius: 50%;
 }
 
 .navbar nav ul li a:hover{
@@ -78,14 +80,14 @@ body{
 }
 
  .col-2{
-    flex-basis: 50%; 
+    flex-basis: 50%;
     min-width: 300px;
 }
 
 .col-2 img{
     max-width: 100%;
     padding: 50px 0;
-} 
+}
 
 .col-2 h1{
     font-size: 50px;
@@ -258,7 +260,7 @@ body{
     width: 100%;
     cursor: pointer;
     filter: grayscale(100%);
-    
+
 }
 
 .col-5 img:hover{
@@ -479,7 +481,7 @@ ul{
 .single-product span{
     padding: 20px 0;
     font-weight: bold;
-    
+
 }
 
 .single-product input{
@@ -499,7 +501,7 @@ input:focus{
 .single-product .fa{
     color: #ff523b;
     margin-left: 10px;
-    
+
 }
 
 .small-img-row{
