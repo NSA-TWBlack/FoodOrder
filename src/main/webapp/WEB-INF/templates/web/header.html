@@ -3,7 +3,7 @@
 <body>
 <div th:fragment="header" style="background-color: #FFFFFF">
     <div class="container">
-        <div class="navbar navbar-product" style="padding-bottom: 0px; padding-top: 0px; margin-bottom: 0px; min-height: 0px; border: none">
+        <div class="navbar navbar-product">
             <div class="logo">
                 <a href="/home"><img th:src="@{/images/logo-home.png}" width="125px"></a>
             </div>
@@ -19,20 +19,15 @@
 
                     <th:block th:if="${session.account == null}">
                         <li><a href="/login">Log in</a></li>
-
                     </th:block>
                 </ul>
             </nav>
             <div style="position: relative">
-
                 <a href="/cart"><img th:src="@{/images/cart.png}" width="30px" height="30px" style="margin-right: 10px;">
                     <th:block th:if="${count > 0}">
-                        <span  class="cart-badge" style="color: black; position: absolute; bottom: 0; right: 0">[[${count}]]</span>
+                        <span class="cart-badge" style="color: black; position: absolute; bottom: 0; right: 0">[[${count}]]</span>
                     </th:block>
-
                 </a>
-
-
             </div>
             <img th:src="@{/images/menu.png}" class="menu-icon" onclick="menutoggle()">
         </div>
