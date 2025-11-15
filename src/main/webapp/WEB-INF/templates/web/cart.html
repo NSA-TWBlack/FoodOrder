@@ -16,8 +16,8 @@
 
 <!-- Cart Page -->
 <div class="small-container cart-page">
-    <h1 class="page-title">Your Shopping Cart</h1>
-    <p class="page-subtitle">Review your items and proceed to checkout</p>
+    <h1 class="page-title">Your Food Basket</h1>
+    <p class="page-subtitle">Review your dishs and proceed to checkout</p>
 
     <!-- Success Message from Server -->
     <th:block th:if="${message}">
@@ -43,7 +43,7 @@
                         <img th:src="@{'/api/uploadfile/upload/' + ${p.productId.thumbnailPhoto}}" alt="">
                         <div class="product-details">
                             <h4>[[${p.productId.name}]]</h4>
-                            <small>Price: <span class="price-highlight">$[[${p.productId.price}]]</span></small>
+                            <small>Price: <span class="price-highlight">[[${p.productId.price}]]đ</span></small>
                             <small>Available: <span class="price-highlight">[[${p.productId.quantity - p.productId.amount}]]</span></small>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <input type="number" class="quantity-input" th:value="${p.quantity}" min="1" th:max="${p.productId.quantity - p.productId.amount}">
                     </div>
                     <div class="subtotal">
-                        $[[${p.productId.price * p.quantity}]]
+                        [[${p.productId.price * p.quantity}]]đ
                         <input type="hidden" th:id="'subtotal' + ${p.productId.id}" th:value="${p.productId.price * p.quantity}" />
                     </div>
                     <div>
@@ -66,7 +66,7 @@
     <div class="total-section">
         <div class="total-row">
             <div class="total-label">Total Amount:</div>
-            <div class="total-amount">$[[${total}]]</div>
+            <div class="total-amount">[[${total}]]đ</div>
         </div>
     </div>
 

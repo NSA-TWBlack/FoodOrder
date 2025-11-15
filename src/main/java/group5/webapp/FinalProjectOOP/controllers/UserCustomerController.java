@@ -95,6 +95,7 @@ public class UserCustomerController {
             userRegister.setUserName(username);
             userRegister.setPassWord(password);
             userRegister.setRole(1);
+            userRegister.setStatus(1);
             userService.saveUser(userRegister);
 
             userRegister = userService.getUserByUserName(username);

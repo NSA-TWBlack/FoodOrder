@@ -18,7 +18,7 @@
 <!-- Product Header Section -->
 <div class="product-header">
     <div class="small-container">
-        <h1>Our Products</h1>
+        <h1>Our Kitchen</h1>
         <p>Discover our amazing collection of delicious food items, carefully crafted to satisfy your taste buds</p>
     </div>
 </div>
@@ -70,7 +70,7 @@
                             <i class="fa fa-star-o"></i>
                         </div>
 
-                        <div class="product-price" name="price">$[[${p.price}]]</div>
+                        <div class="product-price" name="price">[[${p.price}]] đ</div>
 
                         <th:block th:if="${p.amount < p.quantity}">
                             <button class="add-to-cart-btn" th:onclick="'addProductToCart(\'' + ${p.id} + '\');'">

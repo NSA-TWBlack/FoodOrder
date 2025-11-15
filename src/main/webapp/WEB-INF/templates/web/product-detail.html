@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Web | Project Group 5</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,133 +14,228 @@
 </head>
 <body>
 <div th:replace="~{web/header::header}"></div>
-<div class="small-container single-product">
-    <div class="row">
 
-        <div class="col-2">
-            <img th:src="@{'/api/uploadfile/upload/'+${product.thumbnailPhoto}}" width="100%" id="productImg" class="product-img">
-
-            <div class="small-img-row">
-                <th:block th:each="p : ${listImageOfProduct}">
-                <div class="small-img-col">
-                    <img th:src="@{'/api/uploadfile/upload/'+${p.link}}" alt="" class="small-img">
+<div class="product-detail-section">
+    <div class="product-container">
+        <div class="product-row animate-slide-up">
+            <!-- Product Images -->
+            <div class="product-images">
+                <div class="main-image-container">
+                    <img th:src="@{'/api/uploadfile/upload/'+${product.thumbnailPhoto}}" id="productImg" class="main-image" alt="Product Image">
                 </div>
+
+                <div class="image-thumbnails">
+                    <th:block th:each="p : ${listImageOfProduct}">
+                        <div class="thumbnail">
+                            <img th:src="@{'/api/uploadfile/upload/'+${p.link}}" alt="Product Thumbnail" class="small-img">
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="product-info">
+                <div class="product-badge">[[${product.category.name}]]</div>
+                <h1 class="product-title">[[${product.name}]]</h1>
+                <div class="product-price">
+                    [[${product.price}]]<span class="price-currency">đ</span>
+                </div>
+
+                <div class="stock-info">
+                    <div class="stock-row">
+                        <span class="stock-label">Total Quantity:</span>
+                        <span class="stock-value">[[${product.quantity}]]</span>
+                    </div>
+                    <div class="stock-row">
+                        <span class="stock-label">Available:</span>
+                        <span class="stock-value"
+                              th:classappend="${product.quantity - product.amount > 10} ? 'stock-available' : 'stock-low'">
+                            [[${product.quantity - product.amount}]]
+                        </span>
+                    </div>
+                </div>
+
+                <th:block th:if="${product.amount < product.quantity}">
+                    <div class="purchase-section">
+                        <div class="quantity-selector">
+                            <span class="quantity-label">Quantity:</span>
+                            <input type="number"
+                                   name="quantity"
+                                   id="quantity"
+                                   value="1"
+                                   min="1"
+                                   th:max="${product.quantity - product.amount}"
+                                   class="quantity-input"
+                                   oninput="validateQuantity(this)">
+                        </div>
+                        <button class="add-to-cart-btn" th:onclick="'addProductToCart(\'' + ${product.id} + '\');'">
+                            <i class="fa fa-shopping-cart" style="margin-right: 10px;"></i>
+                            Add to Cart
+                        </button>
+                    </div>
                 </th:block>
-            </div>
 
-        </div>
+                <th:block th:if="${product.amount >= product.quantity}">
+                    <div class="purchase-section">
+                        <button class="add-to-cart-btn sold-out-btn" disabled>
+                            <i class="fa fa-times" style="margin-right: 10px;"></i>
+                            Sold Out
+                        </button>
+                    </div>
+                </th:block>
 
-        <div class="col-2">
-            <span>[[${product.category.name}]]</span>
-            <h1>[[${product.name}]]</h1>
-            <h4>[[${product.price}]] $</h4>
-            <span>Quantity : [[${product.quantity}]]</span><br>
-            <span>Rest : [[${product.quantity - product.amount}]]</span>
-
-            <br>
-            <th:block th:if="${product.amount < product.quantity}">
-                <span style="font-size:16px;">Số lượng:
-                    <input type="number" name="quantity" id="quantity" value="1" min="1" th:max="${product.quantity - product.amount}" style="padding: 8px 10px;outline:none;"></span>
-                <div class="btn" type="submit" th:onclick="'addProductToCart(\'' + ${product.id} + '\');'"> Add to Cart</div>
-            </th:block>
-
-            <th:block th:if="${product.amount >= product.quantity}">
-                <div class="btn" style="background-color: #2b3d51">Sold out</div>
-            </th:block>
-            <br>
-            <p>Brand: [[${detail.brand}]]</p>
-            <p>Color: [[${detail.color}]]</p>
-            <p>Description: [[${detail.description}]]</p>
-            <p>Material: [[${detail.material}]]</p>
-        </div>
-
-    </div>
-</div>
-
-<!-- ------ title ------ -->
-<div class="small-container">
-    <div class="row row-2">
-        <h2>Related Products</h2>
-        <a href="/products/0/page/1"><p>View More</p></a>
-    </div>
-</div>
-
-<!-- ----- products ----- -->
-
-<div class="small-container">
-
-    <div class="row">
-        <th:block th:each=" u : ${listProductSame}">
-            <div class="col-4">
-                <a th:href="@{'/product-detail/'+${u.id}+'/'+${u.category.id}}">
-                    <img th:src="@{'/api/uploadfile/upload/'+${u.thumbnailPhoto}}"></a>
-                <h4>[[${u.name}]]</h4>
-                <div class="rating">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star-half-o"></i>
-                    <i class="fa fa-star-o"></i>
+                <div class="product-details">
+<!--                    <div class="detail-item">-->
+<!--                        <span class="detail-label">Brand:</span>-->
+<!--                        <span class="detail-value">[[${detail.brand}]]</span>-->
+<!--                    </div>-->
+<!--                    <div class="detail-item">-->
+<!--                        <span class="detail-label">Color:</span>-->
+<!--                        <span class="detail-value">[[${detail.color}]]</span>-->
+<!--                    </div>-->
+<!--                    <div class="detail-item">-->
+<!--                        <span class="detail-label">Material:</span>-->
+<!--                        <span class="detail-value">[[${detail.material}]]</span>-->
+<!--                    </div>-->
+                    <div class="detail-item">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">[[${detail.description}]]</span>
+                    </div>
                 </div>
-                <p>[[${u.price}]] $</p>
             </div>
-        </th:block>
+        </div>
     </div>
 </div>
+
+<!-- Related Products Section -->
+<div class="related-section">
+    <div class="product-container">
+        <div class="section-header">
+            <h2 class="section-title">Related Products</h2>
+            <a href="/products/0/page/1" class="view-more-link">View More</a>
+        </div>
+
+        <div class="row">
+            <th:block th:each="u : ${listProductSame}">
+                <div class="col-4 animate-fade-in">
+                    <a th:href="@{'/product-detail/'+${u.id}+'/'+${u.category.id}}">
+                        <img th:src="@{'/api/uploadfile/upload/'+${u.thumbnailPhoto}}" alt="Related Product">
+                    </a>
+                    <h4>[[${u.name}]]</h4>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                        <i class="fa fa-star-o"></i>
+                    </div>
+                    <p>[[${u.price}]] đ</p>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{web/footer::footer}"></div>
-<!-- -------- js for toggle menu -------- -->
+
+<!-- JavaScript -->
 <script>
     var MenuItems = document.getElementById("MenuItems");
-
-    MenuItems.style.maxHeight = "0px";
+    if (MenuItems) {
+        MenuItems.style.maxHeight = "0px";
+    }
 
     function menutoggle() {
         if (MenuItems.style.maxHeight == "0px") {
             MenuItems.style.maxHeight = "200px"
-        }
-        else {
+        } else {
             MenuItems.style.maxHeight = "0px"
         }
     }
 </script>
 
-
 <script>
     var ProductImg = document.getElementById("productImg");
     var SmallImg = document.getElementsByClassName("small-img");
 
-    SmallImg[0].onmouseover = function(){
-        ProductImg.src = SmallImg[0].src;
+    for (let i = 0; i < SmallImg.length; i++) {
+        SmallImg[i].onmouseover = function() {
+            ProductImg.src = SmallImg[i].src;
+        }
     }
-
-    SmallImg[1].onmouseover = function(){
-        ProductImg.src = SmallImg[1].src;
-    }
-
-    SmallImg[2].onmouseover = function(){
-        ProductImg.src = SmallImg[2].src;
-    }
-
-    SmallImg[3].onmouseover = function(){
-        ProductImg.src = SmallImg[3].src;
-    }
-
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
-</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
-    function addProductToCart(id){
+    function addProductToCart(id) {
         const quantity = document.getElementById('quantity').value;
         $.ajax({
-            url: "/add-to-cart/" + id +"/"+ quantity,
-            type:"get",
-            success: function(response){
-                alert(response)
+            url: "/add-to-cart/" + id + "/" + quantity,
+            type: "get",
+            success: function(response) {
+                // Show success message with better styling
+                showNotification(response, 'success');
             },
-            error: function (xhr){
+            error: function(xhr) {
+                showNotification('Error adding product to cart', 'error');
             },
         });
+    }
+
+    function showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'linear-gradient(45deg, #4CAF50, #45a049)' : 'linear-gradient(45deg, #f44336, #d32f2f)'};
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10000;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-out;
+        `;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Add CSS animations for notifications
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(300px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(300px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    function validateQuantity(input) {
+        const min = parseInt(input.min) || 1;
+        const max = parseInt(input.max) || 1;
+        let value = parseInt(input.value);
+
+        if (isNaN(value) || value < min) {
+            input.value = min;
+        } else if (value > max) {
+            input.value = max;
+        }
     }
 </script>
 </body>

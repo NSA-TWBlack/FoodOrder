@@ -18,6 +18,12 @@ A full-stack food ordering web application built with **Spring Boot**, **Bootstr
 - Add/update/delete food items
 - Manage orders and users
 
+### 🛒 Seller
+- Register and manage seller profile
+- Add/update/delete their own food items
+- View and manage their orders
+- Track sales and earnings
+
 ---
 
 ## 🧱 Tech Stack
@@ -166,6 +172,7 @@ git status
 ```
 # Check commit was pushed into remote
 git log --oneline
+
 # Check commit was wasn't pushed into remote (just added to staging area)
 git log origin <branch_name>..HEAD --oneline
 ```
@@ -181,6 +188,7 @@ git pull origin <branch_name>
 ```
 # Create on local
 git checkout -b <branch_name>
+
 # Push new branch into remote
 git push -u origin <branch_name>
 ```
@@ -188,16 +196,44 @@ git push -u origin <branch_name>
 ```
 # Delete on local (just branch was merged into another branch)
 git branch -d <branch_name>
+
 # Delete on local (forced to delete)
 git branch -D <branch_name>
+
 # Delete on remote
 git push origin --delete <branch_name>
 ```
-### Rules of commit message writing
-- "feat: ...": Add new function, file or some changes
-- ""
+- Reset code to previous commit (used in case remove some commit unnecessary)
+```
+# Keep the staged
+git reset --soft <commit_hash>
+
+# Remove the staged (unstaged)
+git reset --mixed <commit_hash>
+
+# Remove all the change (create, update, delete)
+git reset --hard <commit_hard>
+```
+### Rules of commit message writing (usually use)
+- Introduces a new feature
+  - "feat: add jwt support"
+  - "feat!: breaking change in API"
+  - "feat!(ui): redesign user profile page"
+- Fixes a bug
+  - "fix: breaking change in API"
+  - "fix(database): resolve data race condition"
+- Changes in documentation only
+  - "docs: update setup section of README"
+- Code changes that do not impact the functionality
+  - style(login): correct indentation in login component
+- Changes that do not modify the source code or test files, like tweaking the build process or adding dependencies
+  - chore: update build script
+  - chore(deps): update dependencies
+
+**Note:** Follow the [Commit cheatsheet](https://cheatsheets.zip/conventional-commits) for more usefully commit messages.
 
 ---
+
 
 ## 📬 Contact
 - Author:
