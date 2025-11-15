@@ -1,3 +1,4 @@
+<!--login.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,95 +6,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Web | Project Group 5</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-<div th:replace="~{web/header-login::header_login}">
+<div th:replace="~{web/header::header}"></div>
 
-</div>
 <div class="account-page">
-    <div class="container">
-        <div class="row">
-            <div class="col-2">
-                <img src="images/fast-food.png" width="100%">
+    <div class="account-container">
+        <div class="account-row">
+            <div class="account-image">
+                <img src="images/fast-food.png" alt="Food Illustration">
             </div>
 
-            <div class="col-2">
+            <div class="form-section">
                 <div class="form-container">
-                    <div class="form-btn">
-                        <span onclick="login()">Login</span>
-                        <span onclick="register()">Register</span>
-                        <hr id="Indicator" style="transform: translateX(0px);">
+                    <div class="form-header">
+                        <h2>Welcome Back!</h2>
+                        <p>Sign in to your account or create a new one</p>
                     </div>
 
-                    <form  id="LoginForm" action="/login" method="post" style="transform: translateX(300px);">
-                        <th:block th:if="${message1}">
-                        <p style="color: red;" class="text-danger">[[${message1}]]</p>
-                        </th:block>
-                        <input type="text" name="username" placeholder="Username">
-                        <input type="password" name="password" placeholder="Password">
-                        <button type="submit" class="btn">Login</button>
-                        <a href="/recover-password">Forgot password</a>
-                    </form>
+                    <div class="form-btn">
+                        <span id="login-tab" onclick="showLogin()" class="active">Login</span>
+                        <span id="register-tab" onclick="showRegister()">Register</span>
+                        <hr id="Indicator">
+                    </div>
 
-                    <form class="form-register" id="RegForm" method="post" action="/register" style="transform: translateX(300px);">
-                        <th:block th:if="${message2}">
-                            <p style="color: red;" class="text-danger">[[${message2}]]</p>
-                        </th:block>
-                        <input type="text" name="fullname" placeholder="Fullname">
-                        <input type="email" name="email" placeholder="Email">
-                        <input type="text" name="phone" placeholder="Phone">
-                        <input type="text" name="username" placeholder="Username">
-                        <input type="password" name="password" placeholder="Password">
-                        <button type="submit" class="btn">Register</button>
-                    </form>
+                    <div class="form-wrapper">
+                        <!-- Login Form -->
+                        <form id="LoginForm" class="form-slide login-form" action="/login" method="post">
+                            <th:block th:if="${message1}">
+                                <div class="error-message">[[${message1}]]</div>
+                            </th:block>
+
+                            <input type="text" name="username" placeholder="👤 Username" required>
+                            <input type="password" name="password" placeholder="🔒 Password" required>
+
+                            <button type="submit" class="submit-btn">
+                                <span class="btn-text">Sign In</span>
+                            </button>
+
+                            <div class="forgot-password">
+                                <a href="/recover-password">Forgot your password?</a>
+                            </div>
+                        </form>
+
+                        <!-- Register Form -->
+                        <form id="RegForm" class="form-slide register-form" method="post" action="/register">
+                            <th:block th:if="${message2}">
+                                <div class="error-message">[[${message2}]]</div>
+                            </th:block>
+
+                            <input type="text" name="fullname" placeholder="👤 Full Name" required>
+                            <input type="email" name="email" placeholder="📧 Email Address" required>
+                            <input type="tel" name="phone" placeholder="📱 Phone Number" required>
+                            <input type="text" name="username" placeholder="🔑 Username" required>
+                            <input type="password" name="password" placeholder="🔒 Password" required>
+
+                            <button type="submit" class="submit-btn">
+                                <span class="btn-text">Create Account</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--<div th:replace="~{web/footer::footer}">-->
 
-</div>
-<!-- -------- js for toggle menu -------- -->
+<!-- JavaScript -->
 <script>
     var MenuItems = document.getElementById("MenuItems");
-
-    MenuItems.style.maxHeight = "0px";
-
-    function menutoggle() {
-        if (MenuItems.style.maxHeight == "0px") {
-            MenuItems.style.maxHeight = "200px"
-        }
-        else {
-            MenuItems.style.maxHeight = "0px"
-        }
-    }
-</script>
-
-<!-- -------- js for toggle form -------- -->
-
-
-<script>
     var LoginForm = document.getElementById("LoginForm");
     var RegForm = document.getElementById("RegForm");
-    var Indicator = document.getElementById("Indicator")
+    var Indicator = document.getElementById("Indicator");
+    var loginTab = document.getElementById("login-tab");
+    var registerTab = document.getElementById("register-tab");
 
-    function login(){
-        RegForm.style.transform = "translateX(300px)";
-        LoginForm.style.transform = "translateX(300px)";
+    if (MenuItems) {
+        MenuItems.style.maxHeight = "0px";
+    }
+
+    function menutoggle() {
+        if (MenuItems) {
+            if (MenuItems.style.maxHeight === "0px") {
+                MenuItems.style.maxHeight = "200px";
+            } else {
+                MenuItems.style.maxHeight = "0px";
+            }
+        }
+    }
+
+    function showLogin() {
+        LoginForm.className = "form-slide login-form slide-in";
+        RegForm.className = "form-slide register-form slide-out";
         Indicator.style.transform = "translateX(0px)";
+
+        loginTab.classList.add("active");
+        registerTab.classList.remove("active");
+
+        // Update form wrapper height
+        updateFormHeight();
     }
 
-    function register(){
-        RegForm.style.transform = "translateX(0px)";
-        LoginForm.style.transform = "translateX(0px)";
-        Indicator.style.transform = "translateX(100px)";
+    function showRegister() {
+        LoginForm.className = "form-slide login-form slide-out";
+        RegForm.className = "form-slide register-form slide-in";
+        Indicator.style.transform = "translateX(100%)";
+
+        registerTab.classList.add("active");
+        loginTab.classList.remove("active");
+
+        // Update form wrapper height
+        updateFormHeight();
     }
 
+    function updateFormHeight() {
+        const wrapper = document.querySelector('.form-wrapper');
+        const activeForm = document.querySelector('.form-slide:not(.slide-out)');
+        if (activeForm) {
+            wrapper.style.height = activeForm.offsetHeight + 'px';
+        }
+    }
+
+    // Window resize handler
+    window.addEventListener('resize', updateFormHeight);
 </script>
 
 </body>

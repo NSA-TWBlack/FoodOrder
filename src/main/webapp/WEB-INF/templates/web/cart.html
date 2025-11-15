@@ -1,126 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Web | Project Group 5</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/cart.css}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-<div th:replace="~{web/header::header}">
+<div th:replace="~{web/header::header}"></div>
 
-</div>
-
+<!-- Cart Page -->
 <div class="small-container cart-page">
+    <h1 class="page-title">Your Food Basket</h1>
+    <p class="page-subtitle">Review your dishs and proceed to checkout</p>
+
+    <!-- Success Message from Server -->
     <th:block th:if="${message}">
-        <h4 style="color: #2fff00">[[${message}]]</h4>
-    </th:block>
-    <table class="cart-item">
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
-            <th></th>
-        </tr>
-        <th:block th:each="p : ${listBill}">
-            <tr>
-                        <td>
-                            <div class="cart-info">
-
-                                <img th:src="@{'/api/uploadfile/upload/' + ${p.productId.thumbnailPhoto}}" alt="">
-                                <div>
-                                    <p>[[${p.productId.name}]]</p>
-                                    <small>Price: $ [[${p.productId.price}]]</small> <br>
-                                    <small>Rest: [[${p.productId.quantity - p.productId.amount}]]</small> <br>
-                                </div>
-
-                            </div></td>
-                        <td><input type="number" min="1" th:max="${p.productId.quantity - p.productId.amount}" th:value="${p.quantity}"
-                                   disabled></td>
-                        <td>$ [[${p.productId.price*p.quantity}]]</td>
-                        <td><div class="btn" th:onclick="'removeCartItem(\'' + ${p.productId.id} + '\');'">Remove</div>
-                            <input type="hidden" th:id="'subtotal'+${p.productId.id}" th:value="${p.productId.price*p.quantity}">
-                        </td>
-            </tr>
-        </th:block>
-        </th:block>
-        </th:block>
-    </table>
-
-    <div class="total-price">
-        <table>
-
-            <tr>
-                <td>Total</td>
-                <td>$ [[${total}]]</td>
-            </tr>
-        </table>
-    </div>
-    <th:block th:if="${total} > 0">
-    <div class="btn-acpt">
-        <a href="/payment" class="btn">Accept</a>
-    </div>
+        <div class="success-message" style="color: #2fff00;">[[${message}]]</div>
     </th:block>
 
-    <th:block th:if="${total} == 0">
-        <div class="btn-acpt">
-            <div class="btn" style="background-color: #2b3d51">Accept</div>
+    <!-- Cart Items -->
+    <div class="cart-container">
+        <div class="cart-header">
+            <div class="cart-header-row">
+                <div>Product</div>
+                <div>Quantity</div>
+                <div>Subtotal</div>
+                <div>Action</div>
+            </div>
         </div>
-    </th:block>
-</div>
-<div th:replace="~{web/footer::footer}">
 
+        <!-- Loop through cart items -->
+        <th:block th:each="p : ${listBill}">
+            <div class="cart-item">
+                <div class="cart-item-row">
+                    <div class="cart-info">
+                        <img th:src="@{'/api/uploadfile/upload/' + ${p.productId.thumbnailPhoto}}" alt="">
+                        <div class="product-details">
+                            <h4>[[${p.productId.name}]]</h4>
+                            <small>Price: <span class="price-highlight">[[${p.productId.price}]]đ</span></small>
+                            <small>Available: <span class="price-highlight">[[${p.productId.quantity - p.productId.amount}]]</span></small>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="number" class="quantity-input" th:value="${p.quantity}" min="1" th:max="${p.productId.quantity - p.productId.amount}">
+                    </div>
+                    <div class="subtotal">
+                        [[${p.productId.price * p.quantity}]]đ
+                        <input type="hidden" th:id="'subtotal' + ${p.productId.id}" th:value="${p.productId.price * p.quantity}" />
+                    </div>
+                    <div>
+                        <button class="remove-btn" th:onclick="'removeCartItem(\'' + ${p.productId.id} + '\')'">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+
+    <!-- Total Section -->
+    <div class="total-section">
+        <div class="total-row">
+            <div class="total-label">Total Amount:</div>
+            <div class="total-amount">[[${total}]]đ</div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="btn-container">
+        <a href="/payment" class="btn">Proceed to Checkout</a>
+        <a href="/products" class="btn" style="background: linear-gradient(45deg, #667eea, #764ba2);">Continue Shopping</a>
+    </div>
 </div>
-<!-- -------- js for toggle menu -------- -->
-<!-- -------- js for toggle menu -------- -->
+
+<!-- Empty Cart State (hidden by default) -->
+<div class="small-container cart-page" style="display: none;">
+    <div class="empty-cart">
+        <div class="empty-cart-icon">
+            <i class="fa fa-shopping-cart"></i>
+        </div>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added any items to your cart yet.</p>
+        <a href="/products" class="btn">Start Shopping</a>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{web/footer::footer}"></div>
+
+<!-- JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
+    // Toggle menu for mobile
     var MenuItems = document.getElementById("MenuItems");
-
-    MenuItems.style.maxHeight = "0px";
+    if (MenuItems) {
+        MenuItems.style.maxHeight = "0px";
+    }
 
     function menutoggle() {
-        if (MenuItems.style.maxHeight == "0px") {
-            MenuItems.style.maxHeight = "200px"
-        }
-        else {
-            MenuItems.style.maxHeight = "0px"
+        if (MenuItems) {
+            MenuItems.style.maxHeight = MenuItems.style.maxHeight === "0px" ? "200px" : "0px";
         }
     }
-</script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
-</script>
 
-<script>
+    // AJAX Remove cart item function
     function removeCartItem(productId) {
         let message = "Bạn có muốn xóa sản phẩm này không?";
         const subtotal = document.getElementById('subtotal' + productId).value;
-        if (confirm(message) == true) {
-            $.ajax({
-                url: "/remove-cart/" + productId + "/" + subtotal,
-                type: "get",
-                success: function (response) {
-                    window.location = "/cart"
-                },
-                error: function (xhr) {
 
-                },
-            });
+        if (confirm(message)) {
+            const removeBtn = event.target;
+            removeBtn.textContent = "Removing...";
+            removeBtn.disabled = true;
+
+            setTimeout(() => {
+                const cartItem = removeBtn.closest('.cart-item');
+
+                // Áp dụng hiệu ứng
+                cartItem.style.animation = 'fadeOutLeft 0.5s ease-out forwards';
+
+                // Sau khi hiệu ứng chạy xong thì gọi API và xóa khỏi DOM
+                setTimeout(() => {
+                    $.ajax({
+                        url: "/remove-cart/" + productId + "/" + subtotal,
+                        type: "GET",
+                        success: function () {
+                            cartItem.remove();
+                            updateTotal();
+                        },
+                        error: function (xhr) {
+                            console.error("Remove failed", xhr);
+                            removeBtn.textContent = "Remove";
+                            removeBtn.disabled = false;
+                        },
+                    });
+                }, 500); // delay trùng với thời gian hiệu ứng
+            }, 1000)
         }
     }
-</script>
-<script>
-    function calc()
-    {
-        var price = document.getElementById("ticket_price").innerHTML;
-        var noTickets = document.getElementById("num").value;
-        var total = parseFloat(price) * noTickets
-        if (!isNaN(total))
-            document.getElementById("total").innerHTML = total
+
+    // Update total function
+    function updateTotal() {
+        const cartItems = document.querySelectorAll('.cart-item');
+        let total = 0;
+
+        cartItems.forEach(item => {
+            const subtotalElement = item.querySelector('.subtotal');
+            if (subtotalElement) {
+                const text = subtotalElement.textContent.replace('$', '').trim();
+                const subtotal = parseFloat(text);
+                total += isNaN(subtotal) ? 0 : subtotal;
+            }
+        });
+
+        document.querySelector('.total-amount').textContent = '$' + total.toFixed(2);
+
+        // Show empty cart if no items
+        if (cartItems.length === 0) {
+            setTimeout(() => {
+                document.querySelector('.cart-page').style.display = 'none';
+                document.querySelector('.cart-page[style*="display: none"]').style.display = 'block';
+            }, 600);
+        }
     }
+
+    // Update quantity and subtotal on input
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('quantity-input')) {
+            const cartItem = e.target.closest('.cart-item');
+            const priceText = cartItem.querySelector('.price-highlight').textContent.replace('$', '');
+            const price = parseFloat(priceText);
+            const quantity = parseInt(e.target.value);
+            const subtotal = price * quantity;
+
+            cartItem.querySelector('.subtotal').textContent = '$' + subtotal.toFixed(2);
+            updateTotal();
+        }
+    });
+
+    // Add fadeOut animation style
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeOutLeft {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Animation on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const cartItems = document.querySelectorAll('.cart-item');
+        cartItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+            item.classList.add('animate-fade-in');
+        });
+    });
 </script>
 
 </body>
